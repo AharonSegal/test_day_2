@@ -73,3 +73,33 @@ GROUP BY entity_id
 ORDER BY id_count 
 DESC 
 LIMIT 3
+
+# 4
+# TODO:
+COME BACK TO SOLVE
+--- 
+SELECT * 
+FROM intel_signals 
+WHERE reported_lat - reported_lon < 1 
+	AND 
+	reported_lat - reported_lon > 0
+	AND
+	reported_lon - reported_lat < 1 
+	AND 
+	reported_lon - reported_lat > 0
+
+
+# 5
+get input of entity_id
+query all the intel for that id
+ORDER BY timestamp
+---
+SELECT * 
+FROM intel_signals 
+WHERE entity_id = 'TGT-006'
+ORDER BY `timestamp` 
+---
+now to get the lon and lat into lists
+and iterate on those list and display the points on the graph
+---
+
