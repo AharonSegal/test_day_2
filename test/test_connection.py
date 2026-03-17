@@ -1,4 +1,4 @@
-from app.config.mysql_connection import MySQLClient
+from config.mysql_connection import MySQLClient
 
 host = "localhost"
 port = 3306
