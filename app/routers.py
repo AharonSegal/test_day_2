@@ -22,3 +22,12 @@ def most_entity():
     """3 most appearing UNKNOWN entity"""
     return dal.most_entity()
 
+@router.get("/query_4")
+def day_night_distance():
+    """suspicious, day o movement, night 10+"""
+    return dal.day_night_distance()
+
+@router.get("/query_5")
+def get_visual_movment():
+    """prints a graph"""
+    return dal.day_night_distance()

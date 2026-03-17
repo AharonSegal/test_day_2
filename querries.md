@@ -75,18 +75,96 @@ DESC
 LIMIT 3
 
 # 4
-# TODO:
-COME BACK TO SOLVE
+day or night was static
 --- 
+il be using the signal table
+classify for each if day or night - HOUR() Function
+
+IF intel_hour IS BETWEEN 8 AND 20 then its day
+ELSE night
+
+then for each entity_id sort to 2 groups (day,night)
+
+for each entity sum its day and night cols
+use distance_from_last_field (new col)
+each entity is one line now with hte sum of distsnce day and sistance night 
+filter al that have 
+for day check if distance = 0
+for night check if distance > 10
+---
+step 1: seperate day and night
+WITH seperate_day_night AS (
+SELECT entity_id ,timestamp,
+CASE
+	WHEN HOUR(timestamp) >= 8 
+	AND  HOUR(timestamp) < 20 
+	THEN 'day'
+	ELSE 'night'
+END AS day_or_night
+FROM intel_signals 
+)
+SELECT day_or_night, COUNT(*) AS counted
+FROM seperate_day_night 
+GROUP BY day_or_night 
+
+*** THIS RETURNED EMPTY
+i was positive this was good and also looking around didnt see any night times 
+moding the time was also a task 
+i found this addtime function and updated 
+---
+UPDATE intel_signals 
+SET timestamp = ADDTIME(timestamp,'10:00:00')
+WHERE entity_id = 'TGT-001'
+
 SELECT * 
 FROM intel_signals 
-WHERE reported_lat - reported_lon < 1 
-	AND 
-	reported_lat - reported_lon > 0
-	AND
-	reported_lon - reported_lat < 1 
-	AND 
-	reported_lon - reported_lat > 0
+WHERE entity_id = 'TGT-001'
+---
+output of the counter now:
+day	516
+night	50
+---
+the function worked!
+---
+
+
+step 2: sum each with distance 
+
+WITH seperate_day_night AS (
+    SELECT 
+    entity_id, 
+    timestamp, 
+    distance_from_last,
+    CASE
+    	WHEN HOUR(timestamp) >= 8
+    	AND  HOUR(timestamp) < 20
+    	THEN 'day'
+    	ELSE 'night'
+    END AS day_or_night
+    FROM intel_signals
+),
+
+entity_sum AS (
+    SELECT 
+        entity_id, 
+        day_or_night, 
+        SUM(distance_from_last) AS total_dist
+    FROM seperate_day_night
+    GROUP BY entity_id, day_or_night
+)
+
+SELECT * FROM entity_sum;
+
+this gave for each id the sum day and a row with id for sum night
+but no entity was twice cause the edited all becae night 
+
+i need to procede so i will consider this working for now 
+and not mod the data for better testing 
+#TODO: COME BACK AND TEST
+---
+step 3: filter entities with day dist 0 night dist 10+
+
+
 
 
 # 5
@@ -102,4 +180,6 @@ ORDER BY `timestamp`
 now to get the lon and lat into lists
 and iterate on those list and display the points on the graph
 ---
+
+# 6 
 

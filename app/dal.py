@@ -1,4 +1,4 @@
-from app.config.cinnection import client
+from app.config.connection import client
 
 class DAL:
 
@@ -53,3 +53,54 @@ class DAL:
             ORDER BY id_count DESC LIMIT 3
         """.strip()
         return client.fetch_all(sql)
+    
+    def day_night_distance(self):
+        """this gave for each id the sum day and a row with id for sum night
+            but no entity was twice cause the edited all becae night 
+
+            i need to procede so i will consider this working for now 
+            and not mod the data for better testing 
+            #TODO: CONTINUE
+        """
+        sql = """
+        WITH seperate_day_night AS (
+        SELECT 
+        entity_id, 
+        timestamp, 
+        distance_from_last,
+        CASE
+            WHEN HOUR(timestamp) >= 8
+            AND  HOUR(timestamp) < 20
+            THEN 'day'
+            ELSE 'night'
+        END AS day_or_night
+        FROM intel_signals
+    ),
+
+    entity_sum AS (
+        SELECT 
+            entity_id, 
+            day_or_night, 
+            SUM(distance_from_last) AS total_dist
+        FROM seperate_day_night
+        GROUP BY entity_id, day_or_night
+    )
+
+    SELECT * FROM entity_sum;
+        """.strip()
+        return client.fetch_all(sql)
+    
+
+    
+    def get_cors_for_problem_5(self):
+        """
+        """
+        sql = """
+        SELECT * 
+        FROM intel_signals 
+        WHERE entity_id = %s
+        ORDER BY `timestamp` 
+        """.strip()
+        return client.fetch_all(sql)
+    
+
